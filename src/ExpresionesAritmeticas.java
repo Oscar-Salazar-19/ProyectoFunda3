@@ -45,7 +45,7 @@ public class ExpresionesAritmeticas {
                         resultado.add(tope);
                     }
                     if (!encontrado) {
-                        throw new IllegalArgumentException("falta un parentesis AAAAAA");
+                        throw new IllegalArgumentException("Error: Falta un parentesis en la expresion");
                     }
             } else if (operadoresValidos.contains(String.valueOf(expresion.charAt(i)))) {
                 while (!operadores.isEmpty() && !operadores.peek().equals("(") && prioridadAlgebraica(operadores.peek()) >= prioridadAlgebraica((String.valueOf(expresion.charAt(i))))){
@@ -57,7 +57,7 @@ public class ExpresionesAritmeticas {
         while (!operadores.isEmpty()) {
             String tope = operadores.pop();
             if (tope.equals("(")) {
-                throw new IllegalArgumentException("se perdio un ) GG");
+                throw new IllegalArgumentException("Error: En la expresion hace falta un parentesis");
             }
             resultado.add(tope);
         }
