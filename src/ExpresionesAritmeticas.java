@@ -1,12 +1,31 @@
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.Scanner;
 
 public class ExpresionesAritmeticas {
     public static void main(String[] args) {
         ExpresionesAritmeticas expresiones = new ExpresionesAritmeticas();
-        Deque<String> conversion = expresiones.conversionPostfija("(8+4)/2*3");
-        System.out.println(conversion);
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.print("\nIngresa la expresión infija (o 'salir' para terminar): ");
+            String entrada = sc.nextLine();
+
+            if ( entrada.equals("salir") ) break;
+
+            try {
+                Deque<String> conversion = expresiones.conversionPostfija(entrada);
+                System.out.println( "Expresión postfija: " + String.join(" ", conversion) );
+
+                double resultado = expresiones.calcularPostfija(conversion);
+                System.out.println("Resultado: " + resultado);
+            } catch (IllegalArgumentException | ArithmeticException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        sc.close();
     }
 
     public int prioridadAlgebraica(String operacion){
@@ -62,5 +81,45 @@ public class ExpresionesAritmeticas {
             resultado.add(tope);
         }
         return resultado;
+    }
+
+
+    public double calcularPostfija(Deque<String> exp)
+    {
+        Deque<Double> numeros = new ArrayDeque<>();
+        double op1, op2;
+
+        while(!exp.isEmpty())
+        {
+            String elemento = exp.pop();
+            if ( Character.isDigit(elemento.charAt( elemento.length() - 1)) ) numeros.push( Double.parseDouble(elemento) );
+            else
+            {
+                if (numeros.size() < 2) throw new IllegalArgumentException("Error: expresion incompleta o mal formada");
+
+                op2 = numeros.pop();
+                op1 = numeros.pop();
+                numeros.push( operaciones(elemento, op1, op2) );
+            }
+
+        }
+
+        return numeros.pop();
+    }
+
+    private double operaciones(String operacion, double num1, double num2){
+        switch (operacion){
+            case "+":
+                return num1 + num2;
+            case "-":
+                return num1 - num2;
+            case "*":
+                return num1 * num2;
+            case "/":
+                if( num2 == 0) throw new ArithmeticException("Error: division entre cero");
+                return num1 / num2;
+            default:
+                throw new IllegalArgumentException("Error: operador no valido");
+        }
     }
 }
